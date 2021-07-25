@@ -1,59 +1,57 @@
 package com.eriks.growth.service;
 
-import com.eriks.growth.Exercise;
-import com.eriks.growth.Workout;
 import com.eriks.growth.dao.ExerciseDao;
+import com.eriks.growth.dao.SetDao;
 import com.eriks.growth.dao.WorkoutDao;
+import com.eriks.growth.domain.Exercise;
+import com.eriks.growth.domain.Workout;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class WorkoutService {
 
     private final WorkoutDao workoutDao;
-    private final ExerciseDao exerciseDao;
+    private final ExerciseService exerciseService;
 
-    public WorkoutService(WorkoutDao workoutDao, ExerciseDao exerciseDao) {
+    public WorkoutService(WorkoutDao workoutDao, ExerciseDao exerciseDao, SetDao setDao, ExerciseService exerciseService) {
         this.workoutDao = workoutDao;
-        this.exerciseDao = exerciseDao;
+        this.exerciseService = exerciseService;
     }
 
-    public List<Workout> getAllWorkouts() {
+    public List<Workout> getAll() {
         return workoutDao.findAll();
     }
 
-    public Workout getWorkoutByDate(Date date) {
+    public Workout getByDate(Date date) {
         return workoutDao.getWorkoutByDate(date);
     }
 
-    public void addWorkout(Workout workout) {
-        workoutDao.save(workout);
+    public Workout save(Workout workout) {
+        return workoutDao.save(workout);
+    }
+
+    public void saveAll(List<Workout> workouts) {
+        workoutDao.saveAll(workouts);
     }
 
     public void addExerciseToWorkout(Date date, Exercise exercise) {
-        Workout workout = getWorkoutByDate(date);
+
+    }
+
+    public void addExercise(Date date, Exercise exercise) {
+        Workout workout = getByDate(date);
         if (workout == null) {
             workout = new Workout(date);
         }
+        exercise = exerciseService.save(exercise);
         workout.addExercise(exercise);
         workoutDao.save(workout);
     }
 
-    public void deleteExercise(UUID exerciseUuid) {
-        Exercise exerciseToDelete = exerciseDao.getByUuid(exerciseUuid);
-        exerciseToDelete.getWorkout().deleteExercise(exerciseToDelete);
-        exerciseDao.delete(exerciseToDelete);
-    }
-
-    public void updateExerciseForWorkout(Date date, Exercise exercise) {
-        exercise.getWorkout().updateExercise(exercise);
-//        Workout workout = getWorkoutByDate(date);
-//        if (workout == null) {
-//            workout = new Workout(date);
-//        }
-//        Exercise oldExercise = exerciseDao.getByUuid(exercise.getUuid());
+    public List<Workout> getByDateRange(Date startDate, Date endDate) {
+        return workoutDao.findByDateBetween(startDate, endDate);
     }
 }

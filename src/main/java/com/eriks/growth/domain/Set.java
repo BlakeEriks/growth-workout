@@ -1,4 +1,4 @@
-package com.eriks.growth;
+package com.eriks.growth.domain;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -15,11 +15,20 @@ public class Set {
     private long id;
     @Column(name="uuid", updatable = false, nullable = false)
     private UUID uuid;
-
     @Column(name = "weight", nullable = false)
-    private int weight;
+    private double weight;
     @Column(name = "reps", nullable = false)
-    private int reps;
+    private double reps;
+    @Column(name = "is_pr", nullable = false)
+    private boolean isPr;
+
+    public Set(UUID uuid, double weight, double reps) {
+        this.uuid = uuid;
+        this.weight = weight;
+        this.reps = reps;
+    }
+
+    public Set() {}
 
     public long getId() {
         return id;
@@ -37,7 +46,7 @@ public class Set {
         this.uuid = uuid;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
@@ -45,11 +54,24 @@ public class Set {
         this.weight = weight;
     }
 
-    public int getReps() {
+    public double getReps() {
         return reps;
     }
 
     public void setReps(int reps) {
         this.reps = reps;
     }
+
+    public boolean isPr() {
+        return isPr;
+    }
+
+    public void setPr(boolean pr) {
+        isPr = pr;
+    }
+
+    public double getVolume() {
+        return reps * weight;
+    }
+
 }

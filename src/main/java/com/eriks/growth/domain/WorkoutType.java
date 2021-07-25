@@ -1,4 +1,4 @@
-package com.eriks.growth;
+package com.eriks.growth.domain;
 
 public enum WorkoutType {
     PUSH_A,
