@@ -5,8 +5,10 @@ import com.eriks.growth.domain.Workout;
 import com.eriks.growth.service.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
@@ -30,7 +32,13 @@ public class WorkoutController {
 
     @GetMapping("{date}")
     public Workout getByDate(@PathVariable("date") @DateTimeFormat(pattern = "MM-dd-yyyy") Date date) {
-        return workoutService.getByDate(date);
+        Workout workout = workoutService.getByDate(date);
+        if (workout == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Workout not found"
+            );
+        }
+        return workout;
     }
 
     @GetMapping("{startDate}{endDate}")
@@ -45,6 +53,7 @@ public class WorkoutController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public void add(@RequestBody Workout workout) {
+        System.out.println(workout.getExercises());
         workoutService.save(workout);
     }
 
